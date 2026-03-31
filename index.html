@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MSc Biotech — Bversity vs Top Universities</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f2eb;
+    --ink: #1a1a18;
+    --ink-soft: #6b6b60;
+    --bversity: #1db87a;
+    --bversity-light: rgba(29,184,122,0.13);
+    --card: #ffffff;
+    --border: #e0ddd4;
+    --tag-bg: #eef9f4;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  .wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 64px 48px 80px;
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 40px;
+    align-items: start;
+  }
+
+  /* LEFT */
+  .left-col { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+
+  .eyebrow {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--bversity); margin-bottom: 12px;
+  }
+  h1 {
+    font-size: clamp(26px, 3vw, 38px); font-weight: 800;
+    line-height: 1.1; color: var(--ink); margin-bottom: 12px;
+  }
+  h1 span { color: var(--bversity); }
+  .subtitle {
+    font-size: 14px; font-weight: 400; color: var(--ink-soft);
+    line-height: 1.65; max-width: 480px;
+  }
+
+  /* CHART CARD */
+  .chart-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 18px; padding: 28px 28px 24px;
+  }
+  .chart-top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
+  }
+  .chart-label { font-size: 14px; font-weight: 700; color: var(--ink); }
+  .legend { display: flex; gap: 16px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-soft); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .legend-dot.bv { background: var(--bversity); }
+  .legend-dot.comp { border: 2px dashed #718096; }
+  svg#radar { display: block; margin: 0 auto; overflow: visible; width: 100%; height: auto; }
+
+  /* SCORES CARD */
+  .scores-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 18px; padding: 24px 28px;
+  }
+  .scores-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 18px; }
+  .scores-title span { font-weight: 400; color: var(--ink-soft); }
+  .score-row { display: flex; align-items: center; gap: 12px; margin-bottom: 13px; }
+  .score-axis { font-size: 12px; color: var(--ink-soft); width: 140px; flex-shrink: 0; }
+  .score-bars { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .bar-wrap { height: 6px; background: #f0ede6; border-radius: 100px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 100px; transition: width 0.55s cubic-bezier(0.4,0,0.2,1); }
+  .bar-fill.bv { background: var(--bversity); }
+  .bar-fill.comp { background: #a0aec0; }
+  .score-nums { font-size: 11px; width: 52px; flex-shrink: 0; text-align: right; color: var(--ink-soft); }
+  .score-nums .s-bv { color: var(--bversity); font-weight: 600; }
+
+  .verdict {
+    margin-top: 18px; padding: 13px 16px;
+    background: var(--bversity-light);
+    border: 1px solid rgba(29,184,122,0.22);
+    border-radius: 10px; font-size: 12.5px; line-height: 1.6; color: #0d5c3a;
+  }
+  .verdict strong { font-weight: 600; }
+
+  .empty-state {
+    text-align: center; padding: 28px 20px;
+    color: var(--ink-soft); font-size: 13px; line-height: 1.6;
+  }
+  .empty-state .arr { font-size: 18px; margin-bottom: 6px; opacity: 0.5; }
+
+  /* RIGHT */
+  .right-col { position: sticky; top: 24px; }
+  .panel-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--ink-soft); margin-bottom: 12px;
+  }
+  .uni-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .uni-card {
+    background: var(--card); border: 1.5px solid var(--border);
+    border-radius: 12px; padding: 14px 16px; cursor: pointer;
+    transition: all 0.2s ease; position: relative; overflow: hidden;
+  }
+  .uni-card::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; background: transparent; transition: background 0.2s;
+    border-radius: 3px 0 0 3px;
+  }
+  .uni-card:hover { border-color: #c8c5bc; transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+  .uni-card.active { border-color: var(--bversity); background: var(--tag-bg); }
+  .uni-card.active::before { background: var(--bversity); }
+
+  .uni-name { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 5px; }
+  .uni-tag {
+    display: inline-block; font-size: 9px; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 2px 7px; border-radius: 100px;
+    background: #f0ede6; color: var(--ink-soft); margin-bottom: 6px;
+  }
+  .uni-card.active .uni-tag { background: rgba(29,184,122,0.15); color: var(--bversity); }
+  .uni-desc { font-size: 11.5px; color: var(--ink-soft); line-height: 1.5; }
+
+  @media (max-width: 800px) {
+    .wrapper { grid-template-columns: 1fr; padding: 36px 20px 60px; gap: 28px; }
+    .right-col { position: static; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .left-col  { animation: fadeUp 0.45s ease both; }
+  .right-col { animation: fadeUp 0.45s ease 0.1s both; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- LEFT -->
+  <div class="left-col">
+    <div>
+      <div class="eyebrow">MSc Biotechnology · Skills Comparison</div>
+      <h1>What does your degree<br>actually <span>prepare you for?</span></h1>
+      <p class="subtitle">Compare how Bversity's industry-integrated MSc stacks up against conventional postgraduate programmes across India.</p>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-top">
+        <span class="chart-label">Bversity vs <span id="comp-name" style="color:var(--ink-soft);font-weight:500">— select a university</span></span>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot bv"></div> Bversity</div>
+          <div class="legend-item"><div class="legend-dot comp"></div> <span id="leg-name">Competitor</span></div>
+        </div>
+      </div>
+      <svg id="radar" viewBox="0 0 420 380" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+
+    <div class="scores-card">
+      <div class="scores-title">Skill breakdown <span id="score-sub"></span></div>
+      <div id="score-rows">
+        <div class="empty-state">
+          <div class="arr">↗</div>
+          Select a university to see the full skill breakdown.
+        </div>
+      </div>
+      <div class="verdict" id="verdict" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right-col">
+    <div class="panel-label">Compare with</div>
+    <div class="uni-list" id="uni-list"></div>
+  </div>
+
+</div>
+<script>
+const AXES = ["Industry Exposure","Wet Lab Skills","Data & Bioinformatics","Research Depth","Career Readiness","Regulatory & RA","Communication","Interdisciplinary"];
+const BVERSITY = [9,8,8,7,10,8,9,9];
+const UNIVERSITIES = [
+  { id:"iiscb", name:"IISc Bangalore", tag:"Research-focused", desc:"Premier research institute. Exceptional for academia but limited industry interface.", scores:[4,9,8,10,4,3,5,7], verdict:"IISc excels in research depth and wet lab — but its MSc is designed to feed PhD pipelines, not industry roles. Career readiness and regulatory exposure are minimal." },
+  { id:"bits", name:"BITS Pilani", tag:"Engineering-integrated", desc:"Strong STEM foundation. Practice school adds some industry exposure.", scores:[6,6,7,7,6,4,6,8], verdict:"BITS offers a broader STEM perspective and moderate industry touchpoints via Practice School. But biotech-specific industry depth and RA training remain gaps." },
+  { id:"manipal", name:"Manipal University", tag:"Large Private", desc:"Wide infrastructure, decent labs. Curriculum tends to be conventional.", scores:[5,7,5,6,5,4,5,5], verdict:"Manipal has good lab infrastructure but delivers a conventional syllabus with limited real-world integration. Industry exposure is largely self-sourced by students." },
+  { id:"amity", name:"Amity University", tag:"Private / Scale", desc:"High intake, multiple campuses. Curriculum breadth over depth.", scores:[5,6,4,5,5,4,5,5], verdict:"Amity provides coverage but lacks specialisation depth. With high student volumes, personalised industry mentoring is difficult to deliver consistently." },
+  { id:"vit", name:"VIT Vellore", tag:"Tech-forward Private", desc:"Strong on tech electives and coding exposure. Biotech benefits from the engineering ecosystem.", scores:[5,6,7,6,6,3,5,7], verdict:"VIT's engineering culture helps on bioinformatics and data modules, but biotech-specific industry integration, mentoring, and regulatory training lag behind Bversity's embedded model." },
+  { id:"srm", name:"SRM Institute", tag:"Large Private / Tamil Nadu", desc:"High research output branding, large campus. MSc Biotech is department-led with moderate lab access.", scores:[5,7,5,6,5,4,5,5], verdict:"SRM positions itself on research and infrastructure, but its MSc Biotech remains largely classroom-driven. Industry mentoring, RA training, and structured career pathways are not core to the curriculum — gaps Bversity is built to close." },
+  { id:"du", name:"Delhi University (DU)", tag:"State / Legacy", desc:"Reputed legacy institution. Strong in theoretical foundations.", scores:[3,7,4,7,3,3,5,5], verdict:"DU's MSc leans heavily academic. Wet lab exposure is decent, but career readiness, industry mentoring, and bioinformatics are significantly underdeveloped." }
+];
+
+let selected = null;
+const SVG = document.getElementById("radar");
+const CX=210, CY=195, R=150, N=AXES.length;
+
+function angle(i) { return (i/N)*Math.PI*2 - Math.PI/2; }
+function pt(val,i,scale) { const r=(val/10)*scale; return [CX+r*Math.cos(angle(i)), CY+r*Math.sin(angle(i))]; }
+function svgEl(tag,attrs={}) {
+  const el=document.createElementNS("http://www.w3.org/2000/svg",tag);
+  Object.entries(attrs).forEach(([k,v])=>el.setAttribute(k,v)); return el;
+}
+
+function buildRadar(compScores) {
+  SVG.innerHTML="";
+  const defs=svgEl("defs");
+  const gBv=svgEl("radialGradient",{id:"gbv",cx:"50%",cy:"50%",r:"50%"});
+  gBv.innerHTML=`<stop offset="0%" stop-color="#1db87a" stop-opacity="0.28"/><stop offset="100%" stop-color="#1db87a" stop-opacity="0.04"/>`;
+  const gCo=svgEl("radialGradient",{id:"gco",cx:"50%",cy:"50%",r:"50%"});
+  gCo.innerHTML=`<stop offset="0%" stop-color="#718096" stop-opacity="0.2"/><stop offset="100%" stop-color="#718096" stop-opacity="0.02"/>`;
+  defs.appendChild(gBv); defs.appendChild(gCo); SVG.appendChild(defs);
+
+  [0.25,0.5,0.75,1].forEach(frac=>{
+    const pts=AXES.map((_,i)=>pt(10,i,R*frac).join(",")).join(" ");
+    SVG.appendChild(svgEl("polygon",{points:pts,fill:"none",stroke:"#e0ddd4","stroke-width":"1"}));
+  });
+
+  AXES.forEach((ax,i)=>{
+    const [x,y]=pt(10,i,R);
+    SVG.appendChild(svgEl("line",{x1:CX,y1:CY,x2:x,y2:y,stroke:"#e0ddd4","stroke-width":"1"}));
+    const ang=angle(i);
+    const lx=CX+(R+22)*Math.cos(ang), ly=CY+(R+22)*Math.sin(ang);
+    const anchor=Math.cos(ang)>0.1?"start":Math.cos(ang)<-0.1?"end":"middle";
+    const txt=svgEl("text",{x:lx,y:ly+4,"text-anchor":anchor,fill:"#6b6b60","font-size":"11","font-family":"Inter, sans-serif","font-weight":"400"});
+    txt.textContent=ax; SVG.appendChild(txt);
+  });
+
+  if(compScores){
+    const cpts=compScores.map((v,i)=>pt(v,i,R).join(",")).join(" ");
+    SVG.appendChild(svgEl("polygon",{points:cpts,fill:"url(#gco)",stroke:"#718096","stroke-width":"2","stroke-dasharray":"5,3"}));
+    compScores.forEach((v,i)=>{ const [x,y]=pt(v,i,R); SVG.appendChild(svgEl("circle",{cx:x,cy:y,r:4,fill:"#fff",stroke:"#718096","stroke-width":"2"})); });
+  }
+
+  const bpts=BVERSITY.map((v,i)=>pt(v,i,R).join(",")).join(" ");
+  SVG.appendChild(svgEl("polygon",{points:bpts,fill:"url(#gbv)",stroke:"#1db87a","stroke-width":"2.5"}));
+  BVERSITY.forEach((v,i)=>{ const [x,y]=pt(v,i,R); SVG.appendChild(svgEl("circle",{cx:x,cy:y,r:5,fill:"#1db87a"})); });
+}
+
+function renderBars(uni) {
+  const cont=document.getElementById("score-rows");
+  document.getElementById("score-sub").textContent=`— Bversity vs ${uni.name}`;
+  cont.innerHTML="";
+  AXES.forEach((ax,i)=>{
+    const bv=BVERSITY[i], co=uni.scores[i];
+    const row=document.createElement("div"); row.className="score-row";
+    row.innerHTML=`<div class="score-axis">${ax}</div><div class="score-bars"><div class="bar-wrap"><div class="bar-fill bv" style="width:0%"></div></div><div class="bar-wrap"><div class="bar-fill comp" style="width:0%"></div></div></div><div class="score-nums"><span class="s-bv">${bv}</span>&thinsp;/&thinsp;${co}</div>`;
+    cont.appendChild(row);
+    requestAnimationFrame(()=>{ row.querySelector(".bar-fill.bv").style.width=bv*10+"%"; row.querySelector(".bar-fill.comp").style.width=co*10+"%"; });
+  });
+  const v=document.getElementById("verdict"); v.style.display="block";
+  v.innerHTML=`<strong>Takeaway —</strong> ${uni.verdict}`;
+}
+
+function renderUniList() {
+  const list=document.getElementById("uni-list"); list.innerHTML="";
+  UNIVERSITIES.forEach(uni=>{
+    const card=document.createElement("div");
+    card.className="uni-card"+(selected===uni.id?" active":"");
+    card.innerHTML=`<div class="uni-name">${uni.name}</div><span class="uni-tag">${uni.tag}</span><div class="uni-desc">${uni.desc}</div>`;
+    card.addEventListener("click",()=>selectUni(uni.id));
+    list.appendChild(card);
+  });
+}
+
+function selectUni(id) {
+  selected=id;
+  const uni=UNIVERSITIES.find(u=>u.id===id);
+  const cn=document.getElementById("comp-name");
+  cn.textContent=uni.name; cn.style.color="var(--ink)"; cn.style.fontWeight="700";
+  document.getElementById("leg-name").textContent=uni.name;
+  buildRadar(uni.scores); renderBars(uni); renderUniList();
+}
+
+buildRadar(null); renderUniList();
+</script>
+</body>
+</html>
